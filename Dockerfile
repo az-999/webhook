@@ -11,12 +11,17 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libwebp-dev \
+    libxpm-dev \
     zip \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 
-# Устанавливаем PHP расширения
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+# Устанавливаем PHP расширения с поддержкой GD и FreeType
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp --with-xpm \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
 # Устанавливаем Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
